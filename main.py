@@ -1,25 +1,25 @@
-# Import modules
 import time
 import datetime
 import os
+import win10toast
 
 # Define a function to show notification
 def show_notification(title, message):
-    # Play alert sound
-    os.system('powershell -c "(New-Object Media.SoundPlayer \'C:\Windows\Media\Speech On.wav\').PlaySync()"')
+    # Create a ToastNotifier object
+    toaster = win10toast.ToastNotifier()
+
+    if title == "12:00":
+        result = "Es ist Mittagszeit!\nZeit zum Essen"
+    elif title == "10:00" and title == "15:00":
+        result = "Bereit für 15 Minuten Pause\nGeh, und hol dir frische Luft!"
+    elif title == "22:02":
+        result = "You are finished for today!\nCongrats"
 
     # Show notification
-    os.system(f"powershell -c \"[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > $null;\
-                $template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02);\
-                $xml = $template.GetXml();\
-                $toast = [xml]::new($xml.OuterXml);\
-                $toast.SelectNodes('//toast')[0].SetAttribute('duration','long');\
-                $toast.SelectNodes('//text')[0].AppendChild($toast.CreateTextNode('{title}'));\
-                $toast.SelectNodes('//text')[1].AppendChild($toast.CreateTextNode('{message}'));\
-                [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Reminder').Show($toast);\"")
+    toaster.show_toast(result, title, message, duration=15, threaded=True)
 
 # Define a list of times to notify
-notify_times = ["10:00", "12:00", "15:00", "17:50"]
+notify_times = ["22:02", "12:00", "15:00", "17:50"]
 
 # Loop forever
 while True:
